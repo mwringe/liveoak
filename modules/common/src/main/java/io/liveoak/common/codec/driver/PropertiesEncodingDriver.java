@@ -61,7 +61,7 @@ public class PropertiesEncodingDriver extends ResourceEncodingDriver {
                 } else {
                     propDriver.addChildDriver(new ValueEncodingDriver(propDriver, value));
                 }
-            } else if (value instanceof List || value instanceof Set) {
+            } else if (value instanceof List || value instanceof Set || value instanceof Collection) {
                 propDriver.addChildDriver(new ListEncodingDriver(propDriver, ((Collection) value).stream(), returnFields().child(name)));
             } else {
                 propDriver.addChildDriver(new ValueEncodingDriver(propDriver, value));

@@ -36,7 +36,7 @@ public class ListEncodingDriver extends AbstractEncodingDriver {
                 } else {
                     addChildDriver(new ResourceEncodingDriver(this, (Resource) e, returnFields()));
                 }
-            } else if (e instanceof List || e instanceof Set) {
+            } else if (e instanceof List || e instanceof Set || e instanceof Collection) {
                 addChildDriver(new ListEncodingDriver(this, ((Collection) e).stream(), returnFields()));
             } else {
                 addChildDriver(new ValueEncodingDriver(this, e));

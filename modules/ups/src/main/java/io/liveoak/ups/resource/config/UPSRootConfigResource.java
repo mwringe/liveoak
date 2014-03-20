@@ -8,6 +8,10 @@ import io.liveoak.spi.resource.async.Responder;
 import io.liveoak.spi.resource.config.ConfigResource;
 import io.liveoak.spi.state.ResourceState;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:mwringe@redhat.com">Matt Wringe</a>
  */
@@ -19,10 +23,12 @@ public class UPSRootConfigResource implements ConfigResource, RootResource {
     protected static final String UPS_SERVER_URL = "upsServerURL";
     protected static final String APPLICATION_ID = "applicationId";
     protected static final String MASTER_SECRET = "masterSecret";
+    protected static final String VARIANTS = "variants";
 
     private String upsServerURL;
     private String applicationId;
     private String masterSecret;
+    private Map<String, UPSVariantConfig> variants = new HashMap<String,UPSVariantConfig>();
 
     public UPSRootConfigResource(String id) {
         this.id = id;
@@ -48,6 +54,7 @@ public class UPSRootConfigResource implements ConfigResource, RootResource {
        sink.accept(UPS_SERVER_URL, upsServerURL);
        sink.accept(APPLICATION_ID, applicationId);
        sink.accept( MASTER_SECRET, masterSecret );
+       sink.accept(VARIANTS, variants.values());
     }
 
     @Override
@@ -55,6 +62,7 @@ public class UPSRootConfigResource implements ConfigResource, RootResource {
        Object upsServerURLProperty = state.getProperty( UPS_SERVER_URL );
        Object applicationIdProperty = state.getProperty( APPLICATION_ID );
        Object masterKeyProperty = state.getProperty( MASTER_SECRET );
+       Object variantsProperty = state.getProperty( VARIANTS );
 
        if (upsServerURLProperty instanceof String) {
            this.upsServerURL = (String) upsServerURLProperty;
@@ -73,6 +81,15 @@ public class UPSRootConfigResource implements ConfigResource, RootResource {
        }  else if (masterKeyProperty != null) { // if it is null, it wasn't specified in the json, so keep old value
            responder.invalidRequest("The " + MASTER_SECRET + " property must be a String.");
        }
+
+       if (variantsProperty instanceof Collection ) {
+            for (ResourceState variantState : (Collection<ResourceState>)variantsProperty) {
+                UPSVariantConfig variantConfig = new UPSVariantConfig(this, variantState);
+                variants.put( variantConfig.getId(), variantConfig );
+            }
+       } else if (variantsProperty != null) {
+           responder.invalidRequest("The " + VARIANTS + " property must be an Array.");
+       }
     }
 
 
@@ -86,5 +103,9 @@ public class UPSRootConfigResource implements ConfigResource, RootResource {
 
     public String getMasterSecret() {
         return masterSecret;
+    }
+
+    public Map<String, UPSVariantConfig> getVariants() {
+        return this.variants;
     }
 }

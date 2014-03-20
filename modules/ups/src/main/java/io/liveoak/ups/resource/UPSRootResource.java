@@ -19,6 +19,7 @@ public class UPSRootResource implements RootResource {
     SubscriptionManager subscriptionManager;
     UPSSubscriptionsResource upsSubscriptionsResource;
     UPSNotifierResource upsNotifierResource;
+    UPSVariantsResource upsVariantsResource;
 
     public UPSRootResource(String id, UPSRootConfigResource configResource, SubscriptionManager subscriptionManager) {
         this.id = id;
@@ -26,6 +27,7 @@ public class UPSRootResource implements RootResource {
         this.subscriptionManager = subscriptionManager;
         this.upsNotifierResource = new UPSNotifierResource( this );
         this.upsSubscriptionsResource = new UPSSubscriptionsResource(this, configResource, subscriptionManager);
+        this.upsVariantsResource = new UPSVariantsResource( this, configResource );
     }
 
     @Override
@@ -47,6 +49,7 @@ public class UPSRootResource implements RootResource {
     public void readMembers( RequestContext ctx, ResourceSink sink ) throws Exception {
         //sink.accept(upsNotifierResource);
         sink.accept(upsSubscriptionsResource);
+        sink.accept(upsVariantsResource);
         sink.close();
     }
 
@@ -56,6 +59,8 @@ public class UPSRootResource implements RootResource {
             responder.resourceRead( this.upsSubscriptionsResource);
 //        } else if (id.equals( UPSNotifierResource.ID )) {
 //            responder.resourceRead(this.upsNotifierResource);
+        } else if (id.equals( UPSVariantsResource.ID )) {
+            responder.resourceRead( this.upsVariantsResource );
         } else {
             responder.noSuchResource( id );
         }
