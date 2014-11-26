@@ -138,6 +138,10 @@ public class ResponseTestCase extends BaseScriptingTestCase {
         // Trigger a read
         assertThat(execGet("/testApp/mock/foo?test=setRequest")).hasStatus(406);
         assertThat(httpResponse).isNotAcceptable().with("request cannot be modified");
+
+        // Test that an unknown returned object throws an error
+        assertThat(execGet("/testApp/mock/foo?test=returnInvalid")).hasStatus(500);
+        assertThat(httpResponse).isInternalError().with("A script returned an invalid response.");
     }
 
     protected void testResource(ResourceState resourceState) throws Exception {

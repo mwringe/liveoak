@@ -23,11 +23,13 @@ import io.liveoak.scripts.objects.impl.exception.LiveOakUpdateNotSupportedExcept
 import io.liveoak.scripts.objects.scripting.ScriptingResourceRequest;
 import io.liveoak.scripts.resource.ScriptConfig;
 import io.liveoak.spi.ResourceErrorResponse;
+import io.liveoak.spi.ResourceResponse;
 import org.dynjs.Config;
 import org.dynjs.exception.ThrowException;
 import org.dynjs.runtime.DynJS;
 import org.dynjs.runtime.GlobalObject;
 import org.dynjs.runtime.Runner;
+import org.dynjs.runtime.Types;
 import org.jboss.logging.Logger;
 
 /**
@@ -170,7 +172,11 @@ public class ScriptManager {
         globalObject.put("liveoak", liveoakMap);
     }
 
-    protected Object handleResponse(Object response, ScriptingResourceRequest request) {
+    protected ResourceResponse handleResponse(Object response, ScriptingResourceRequest request) {
+
+        if (response == null || response instanceof Types.Undefined || response instanceof Types.Null) {
+            return null;
+        }
 
         if (response instanceof ThrowException) {
             Object value = ((ThrowException)response).getValue();
@@ -208,7 +214,9 @@ public class ScriptManager {
         } else if (response instanceof Exception) {
             ResourceErrorResponse resourceErrorResponse = new DefaultResourceErrorResponse(request, ResourceErrorResponse.ErrorType.INTERNAL_ERROR , "An error occurred while running the script.");
             return resourceErrorResponse;
+        } else {
+            ResourceErrorResponse resourceErrorResponse = new DefaultResourceErrorResponse(request, ResourceErrorResponse.ErrorType.INTERNAL_ERROR, "A script returned an invalid response.");
+            return resourceErrorResponse;
         }
-        return null;
     }
 }

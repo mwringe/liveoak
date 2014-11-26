@@ -85,8 +85,10 @@ public class ScriptInterceptor extends DefaultInterceptor {
                 Object reply = manager.executeScripts(context.response());
                 if (reply instanceof ResourceResponse) {
                     context.forward((ResourceResponse) reply);
-                } else {
+                } else if (reply == null) {
                     context.forward();
+                } else {
+                    context.forward(new DefaultResourceErrorResponse(context.response().inReplyTo(), ResourceErrorResponse.ErrorType.INTERNAL_ERROR, "Error processing script. Script returns something other than a ResourceResponse."));
                 }
             } else {
                 context.forward();

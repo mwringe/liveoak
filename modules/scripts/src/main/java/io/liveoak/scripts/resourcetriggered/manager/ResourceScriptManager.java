@@ -149,7 +149,7 @@ public class ResourceScriptManager extends ScriptManager {
         return null;
     }
 
-    protected Object runScript(String functionName, ResourceTriggeredScript script, ResourceResponse resourceResponse) throws Exception {
+    protected ResourceResponse runScript(String functionName, ResourceTriggeredScript script, ResourceResponse resourceResponse) throws Exception {
 
         Object response = runScript(functionName, script, new LiveOakResourceResponse(resourceResponse), getLibrary(script));
 
@@ -157,7 +157,7 @@ public class ResourceScriptManager extends ScriptManager {
         return handleResponse(response, request);
     }
 
-    protected Object runScript(String functionName, ResourceTriggeredScript script, ScriptingResourceRequest resourceRequest) throws Exception {
+    protected ResourceResponse runScript(String functionName, ResourceTriggeredScript script, ScriptingResourceRequest resourceRequest) throws Exception {
 
         Object response = runScript(functionName, script, new LiveOakResourceRequest(resourceRequest), getLibrary(script));
 

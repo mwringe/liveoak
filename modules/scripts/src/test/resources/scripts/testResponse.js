@@ -8,6 +8,8 @@ function postRead(response, libraries) {
         testSetResource(response, libraries);
       } else if (test == "setRequest") {
         testSetRequest(response, libraries);
+      } else if (test == "returnInvalid") {
+        return "Hello World";
       }
     } catch (err) {
       // Note: returning a NotAcceptableError so that the error message gets propagated back to the
